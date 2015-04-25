@@ -1,7 +1,7 @@
 <?php
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 
- *  ( acouding to my tasty ) readable format.
+ *  ( according to my tasty ) readable format.
  *  
  *  this will just write the Title of the book once followed by all the 
  *  notes related to that book, with a empty line following each note. 
