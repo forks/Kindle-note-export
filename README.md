@@ -1,2 +1,7 @@
 # Kindle-note-export
-Export kindle notes / highlights
+
+Small PHP script to export kindle notes / highlights to plain text.
+
+## usage
+
+php -f bin/kindle2txt.php 
