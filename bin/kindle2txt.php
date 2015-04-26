@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 
  *  ( according to my tasty ) readable format.
@@ -13,33 +14,45 @@
 /*
  *  Show usage
  */
+
 function usage() {
     global $argv, $argc;
 
-    echo "Usage: " . $argv[0] . " \"path/to/My Clippings.txt\" [OPTION]/\n";
-    echo "";
-    echo "TITLES    list just the book titels that has highlights";
-    echo "";
+    echo "Usage: " . $argv[0] . " MyClippingFile [OPTION]\n";
+    echo "\n";
+    echo "TITLES    list only the book titels.";
+    echo "\n";
     echo "ex. to just list the titles in the clipping file type : \n";
-    echo "". $argv[0] . " \"My Clippings.txt\" TITLES\n";
+    echo "" . $argv[0] . " MyClippingFile TITLES\n";
     echo "\nto list all highlights : \n";
-    echo "" , $argv[0] . " \"My Clippings.txt\" \n";
+    echo "", $argv[0] . " MyClippingFile \n\n";
 }
 
 // check if number of args is wrong
 if (($argc < 2) || ($argc > 3 )) {
     usage();
+    exit(1);
 }
 
 // Just list books titles ?
-if( $argv[2] == 'TITLES' ) {
-    $just_titles = true;
-} else {
+if ($argc == 3) {
+    if ($argv[2] == 'TITLES') {
+        $just_titles = true;
+    } else {
+        echo "ERROR - unknown argument : " . $argv[2] . "\n";
+        usage();
+        exit(2);
+    }
+} 
+
+if( ! isset($just_titles) ) {
     $just_titles = false;
 }
 
 if (!file_exists($argv[1])) {
-    echo "Could not found file : " . $argv[1] . "\n";
+    echo "ERROR - Could not found file : " . $argv[1] . "\n";
+    usage();
+    exit(3);
 }
 
 $clipfile = fopen($argv[1], "r") or die("Could not open file.");
@@ -61,10 +74,10 @@ while (!feof($clipfile)) {
         $skip = true;
         $highlight_start = true;
     }
-                       
+
     if (strpos($line, "==========") !== false) {
-        if( ! $just_titles ) {
-        echo "\n";
+        if (!$just_titles) {
+            echo "\n";
         }
         $highlight_start = false;
         $skip = true;
@@ -76,15 +89,15 @@ while (!feof($clipfile)) {
 
     if (!$skip) {
         if ($highlight_start == true) {
-            if( ! $just_titles ) {
-            echo $line;
+            if (!$just_titles) {
+                echo $line;
             }
         } else {
             if (!in_array($line, $books)) {
-                if(! $just_titles ) {
-                echo "====" . $line;
+                if (!$just_titles) {
+                    echo "====" . $line;
                 }
-                
+
                 $books[] = $line;
 
                 $newbook = true;
@@ -94,7 +107,7 @@ while (!feof($clipfile)) {
     $skip = false;
 }
 
-if( $just_titles ) {
+if ($just_titles) {
     foreach ($books as $title) {
         echo $title;
     }
