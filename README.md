@@ -11,4 +11,4 @@ a list of the book titles in the clipping file.
 
 ## usage
 
-php -f bin/kindle2txt.php MyClippingFile [TITLES]
+php -f src/kindle2txt.php MyClippingFile [TITLES]
