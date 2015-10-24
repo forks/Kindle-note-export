@@ -15,4 +15,5 @@ Usage: [OPTION] -f MyClippingFile
 
 options: 
 -t list only the book titels.
+
 -f file. The file containing the clippings.
