@@ -1,4 +1,6 @@
-<?php namespace smaegaard\kindlenote;
+<?php
+
+namespace smaegaard\kindlenote;
 
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 
@@ -17,23 +19,16 @@ class Scanner {
 
     private $argv;
     private $argc;
+    private $books;
 
-    public function __construct( ) {
+    public function __construct() {
         $this->argv = $_SERVER['argv'];
         $this->argc = $_SERVER['argc'];
-    }
-
-    private function usage() {
-        echo "Usage: " . $this->argv[0] . " [OPTION] -f MyClippingFile\n";
-        echo "\n";
-        echo "options: \n";
-        echo "-t list only the book titels.\n";
-        echo "-f file. The file containing the clippings.\n";
-        echo "\n";
+        $this->books = array();
     }
 
     public function run() {
-        $options = getopt( "tf:" );
+        $options = getopt("tf:");
 
         if (array_key_exists("f", $options)) {
             if (file_exists($options["f"])) {
@@ -50,12 +45,11 @@ class Scanner {
         }
 
         $just_titles = false;
-// Just list books titles ?
+// Just list books titles 
         if (array_key_exists("t", $options)) {
             $just_titles = true;
         }
 
-        $books = array();
         $highlight_start = false;
         $skip = false;
 
@@ -92,12 +86,12 @@ class Scanner {
                         echo $line;
                     }
                 } else {
-                    if (!in_array($line, $books)) {
+                    if (!in_array($line, $this->books)) {
                         if (!$just_titles) {
                             echo "====" . $line;
                         }
 
-                        $books[] = $line;
+                        $this->books[] = $line;
 
                         $newbook = true;
                     }
@@ -107,12 +101,21 @@ class Scanner {
         }
 
         if ($just_titles) {
-            foreach ($books as $title) {
+            foreach ($this->books as $title) {
                 echo $title;
             }
         }
 
         fclose($clipfile);
+    }
+
+    private function usage() {
+        echo "Usage: " . $this->argv[0] . " [OPTION] -f MyClippingFile\n";
+        echo "\n";
+        echo "options: \n";
+        echo "-t        list only the book titels.\n";
+        echo "-f file   The file containing the clippings.\n";
+        echo "\n";
     }
 
 }
