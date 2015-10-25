@@ -1,8 +1,8 @@
 #!/usr/bin/php
-<?php
+<?php namespace smaegaard;
 
-include 'smaegaard/kindlenote/scanner.php';
+require __DIR__ . '../../vendor/autoload.php';
 
-$scanner = new smaegaard\kindlenote\scanner();
+$scanner = new \smaegaard\kindlenote\Scanner();
 
 $scanner->run();

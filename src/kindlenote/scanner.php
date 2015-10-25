@@ -1,6 +1,4 @@
-<?php
-
-namespace smaegaard\kindlenote;
+<?php namespace smaegaard\kindlenote;
 
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 

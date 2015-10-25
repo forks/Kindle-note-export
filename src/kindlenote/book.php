@@ -1,5 +1,4 @@
-<?php
-namespace smaegaard\kindlenote;
+<?php namespace kindlenote;
 /* 
  *  Book
  */
