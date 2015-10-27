@@ -12,19 +12,22 @@ namespace smaegaard\kindlenote;
  *  If the option TITLES is giving after the clipping file, it will just print
  *  a list of the book titles.
  */
-
-include 'book.php';
+include 'bookcollection.php';
 
 class Scanner {
 
     private $argv;
     private $argc;
     private $books;
+    private $opt;
+    private $clipfile;
 
     public function __construct() {
         $this->argv = $_SERVER['argv'];
         $this->argc = $_SERVER['argc'];
-        $this->books = array();
+        $this->books = new BookCollection();
+        $this->opt = array();
+        $this->opt['only_titles'] = false;
     }
 
     public function run() {
@@ -32,81 +35,70 @@ class Scanner {
 
         if (array_key_exists("f", $options)) {
             if (file_exists($options["f"])) {
-                $clipfile = fopen($options["f"], "r") or die("Could not open file.");
+                $this->opt['file'] = $options["f"];   //$clipfile = fopen($options["f"], "r") or die("Could not open file.");
             } else {
-                echo "ERROR - Could not found file : " . $options["f"] . "\n";
+                echo "ERROR - Could not find file : " . $options["f"] . "\n";
                 usage();
                 exit(66);
             }
         } else {
-            echo "ERROR - No clipping file given with option -f\n";
+            echo "ERROR - No clipping file parsed with option -f\n";
             $this->usage();
             exit(66);
         }
 
-        $just_titles = false;
-// Just list books titles 
+        // Just list books titles 
         if (array_key_exists("t", $options)) {
-            $just_titles = true;
+            $this->opt['only_titles'] = true;
         }
 
-        $highlight_start = false;
-        $skip = false;
+        $this->parse();
 
-// pass clippings file
-// yes its ugly
-        while (!feof($clipfile)) {
-            $line = fgets($clipfile);
+        $this->output();
+    }
+
+    private function parse() {
+        $this->clipfile = fopen($this->opt['file'], "r") or die("Could not open file.");
+
+        $last_title = NULL;
+
+        while (!feof($this->clipfile)) {
+
+            $line = fgets($this->clipfile);
+
+            if (strpos($line, "==========") !== false) {
+                continue;
+            }
 
             if (strpos($line, "- Your Highlight on page") !== false) {
-                $skip = true;
-                $highlight_start = true;
+                fgets($this->clipfile);
+                $line = fgets($this->clipfile);
+                $this->books->addHighlight($last_title, $line);
+                continue;
             }
 
             if (strpos($line, "- Your Bookmark") !== false) {
-                $skip = true;
-                $highlight_start = true;
+                continue;
             }
-
-            if (strpos($line, "==========") !== false) {
-                if (!$just_titles) {
-                    echo "\n";
-                }
-                $highlight_start = false;
-                $skip = true;
+            
+            if( empty( $line ) ) {
+                continue;
             }
-
-            if (strlen($line) <= 2) {
-                $skip = true;
+            
+            if ( $this->books->haveBook($line) == false ) {
+                $this->books->addNew($line);
+                $last_title = $line;
             }
-
-            if (!$skip) {
-                if ($highlight_start == true) {
-                    if (!$just_titles) {
-                        echo $line;
-                    }
-                } else {
-                    if (!in_array($line, $this->books)) {
-                        if (!$just_titles) {
-                            echo "====" . $line;
-                        }
-
-                        $this->books[] = $line;
-
-                        $newbook = true;
-                    }
-                }
-            }
-            $skip = false;
         }
 
-        if ($just_titles) {
-            foreach ($this->books as $title) {
+        fclose($this->clipfile);
+    }
+
+    private function output() {
+        if ($this->opt['only_titles'] == true) {
+            foreach ($this->books->getTitles() as $title)
                 echo $title;
-            }
         }
-
-        fclose($clipfile);
     }
 
     private function usage() {

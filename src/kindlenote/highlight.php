@@ -1,4 +1,4 @@
-<?php namespace kindlenote;
+<?php namespace smaegaard\kindlenote;
 
 /*
  *  Book highlight
