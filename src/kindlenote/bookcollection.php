@@ -17,12 +17,14 @@ class BookCollection {
         $this->books = array();
     }
 
-    public function addNew($title) {
-        if ($this->haveBook($title)) {
+    public function addNew($line) {
+        if ($this->haveBook($line)) {
             return false;
         } else {
-            $this->books[] = new Book($title);
-            return true;
+            $title = $this->getTitleFromLine($line);
+            $author = $this->getAuthorFromLine($line);
+            $this->books[] = new Book($title, $author);
+            return end($this->books)->getTitle();
         }
     }
 
@@ -33,6 +35,7 @@ class BookCollection {
     /*
      *  return array of titles
      */
+
     public function getTitles() {
         $titles = array();
         foreach ($this->books as $book) {
@@ -40,6 +43,20 @@ class BookCollection {
         }
         return $titles;
     }
+    
+    /*
+     * return array of authors.
+     * 
+     * returns no duplicats.
+     */
+    public function getAuthors() {
+        $authors = array();
+        foreach ($this->books as $book) {
+            $authors[] = $book->getAuthors();   
+        }
+        return array_unique($authors, SORT_STRING); 
+    }
+
 
     public function getBook($title) {
         foreach ($this->books as $book)
@@ -51,13 +68,25 @@ class BookCollection {
      *  is book in collection.
      */
 
-    public function haveBook($title) {
+    public function haveBook($line) {
+        $title = $this->getTitleFromLine($line);
         foreach ($this->books as $book) {
             if ($book->getTitle() == $title)
                 return true;
         }
 
         return false;
+    }
+
+    private function getTitleFromLine($line) {
+        $text = explode("(", $line);
+        return $text[0];
+    }
+
+    private function getAuthorFromLine($line) {
+        $text = explode("(", $line);
+        $temp = explode(")", $text[1]);
+        return $temp[0];
     }
 
 }

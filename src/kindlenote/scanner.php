@@ -27,11 +27,12 @@ class Scanner {
         $this->argc = $_SERVER['argc'];
         $this->books = new BookCollection();
         $this->opt = array();
-        $this->opt['only_titles'] = false;
+        $this->opt['titles'] = false;
+        $this->opt['authors'] = false;
     }
 
     public function run() {
-        $options = getopt("tf:");
+        $options = getopt("atf:");
 
         if (array_key_exists("f", $options)) {
             if (file_exists($options["f"])) {
@@ -49,7 +50,11 @@ class Scanner {
 
         // Just list books titles 
         if (array_key_exists("t", $options)) {
-            $this->opt['only_titles'] = true;
+            $this->opt['titles'] = true;
+        }
+        
+        if (array_key_exists("a", $options)) {
+            $this->opt['authors'] = true;
         }
 
         $this->parse();
@@ -81,13 +86,12 @@ class Scanner {
                 continue;
             }
 
-            if (empty($line) || (strlen( $line ) <= 2)) {
+            if (empty($line) || (strlen($line) <= 2)) {
                 continue;
             }
 
             if ($this->books->haveBook($line) == false) {
-                $this->books->addNew($line);
-                $last_title = $line;
+                $last_title = $this->books->addNew($line);
             }
         }
 
@@ -95,9 +99,15 @@ class Scanner {
     }
 
     private function output() {
-        if ($this->opt['only_titles'] == true) {
+        if ($this->opt['titles'] == true) {
             foreach ($this->books->getTitles() as $title)
-                echo $title;
+                echo $title . "\n";
+        }
+        
+        if ($this->opt['authors'] == true ) {
+            foreach( $this->books->getAuthors() as $author ) {
+                echo $author . "\n";
+            }
         }
     }
 
@@ -105,8 +115,9 @@ class Scanner {
         echo "Usage: " . $this->argv[0] . " [OPTION] -f MyClippingFile\n";
         echo "\n";
         echo "options: \n";
-        echo "-t        list only the book titels.\n";
         echo "-f file   The file containing the clippings.\n";
+        echo "-t        list the book titels.\n";
+        echo "-a        list the all the authors\n";
         echo "\n";
     }
 
