@@ -80,12 +80,12 @@ class Scanner {
             if (strpos($line, "- Your Bookmark") !== false) {
                 continue;
             }
-            
-            if( empty( $line ) ) {
+
+            if (empty($line) || (strlen( $line ) <= 2)) {
                 continue;
             }
-            
-            if ( $this->books->haveBook($line) == false ) {
+
+            if ($this->books->haveBook($line) == false) {
                 $this->books->addNew($line);
                 $last_title = $line;
             }
