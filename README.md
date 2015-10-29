@@ -12,4 +12,6 @@ options:
 
 -f filename     The file containing the clippings.
 
--t              list only the book titels.
+-t              list the book titles in the clipping file.
+
+-a              list the all the authors. Authors are only listed once.

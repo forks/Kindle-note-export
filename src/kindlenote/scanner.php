@@ -116,8 +116,8 @@ class Scanner {
         echo "\n";
         echo "options: \n";
         echo "-f file   The file containing the clippings.\n";
-        echo "-t        list the book titels.\n";
-        echo "-a        list the all the authors\n";
+        echo "-t        list the book titles in the clipping file.\n";
+        echo "-a        list the all the authors. Authors are only listed once.\n";
         echo "\n";
     }
 
