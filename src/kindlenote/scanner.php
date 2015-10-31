@@ -32,7 +32,12 @@ class Scanner {
     }
 
     public function run() {
-        $options = getopt("ato:f:");
+        $options = getopt("atho:f:");
+        
+        if (array_key_exists("h", $options) ) {
+            $this->usage();
+            exit(1);
+        }
 
         if (array_key_exists("f", $options)) {
             if (file_exists($options["f"])) {
@@ -141,10 +146,11 @@ class Scanner {
         echo "Usage: " . $this->argv[0] . " [OPTION] -f MyClippingFile\n";
         echo "\n";
         echo "options: \n";
-        echo "-f file       The file containing the clippings.\n";
-        echo "-t            List the book titles in the clipping file.\n";
-        echo "-a            List the all the authors. Authors are only listed once.\n";
-        echo "-o directory  The directory to output files.\n";
+        echo "-h                Print this help\n";
+        echo "-f <file>         The clipping file to be parsed\n";
+        echo "-t                List all book titles found in the clipping file\n";
+        echo "-a                List the all the authors. Authors are only listed once\n";
+        echo "-o <directory>    The directory to output files to\n";
         echo "\n";
     }
 

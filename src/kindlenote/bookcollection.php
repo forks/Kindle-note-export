@@ -41,7 +41,7 @@ class BookCollection implements \IteratorAggregate {
     public function getAuthors() {
         $authors = array();
         foreach ($this->books as $book) {
-            $authors[] = $book->getAuthors();
+            $authors[] = $book->getAuthor();
         }
         return array_unique($authors, SORT_STRING);
     }

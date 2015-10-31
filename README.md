@@ -6,7 +6,9 @@ This is just a quick PHP script to reformat/export kindle highlights.
 
 From the commandline just run the script.
 
- php -f src/kindlenoteexport.php [OPTION] -f MyClippingFile
+```
+$ php -f src/kindlenoteexport.php [OPTION] -f MyClippingFile
+```
 
 options: 
 
