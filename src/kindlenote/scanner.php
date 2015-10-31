@@ -32,7 +32,7 @@ class Scanner {
     }
 
     public function run() {
-        $options = getopt("atf:");
+        $options = getopt("ato:f:");
 
         if (array_key_exists("f", $options)) {
             if (file_exists($options["f"])) {
@@ -48,11 +48,15 @@ class Scanner {
             exit(66);
         }
 
+        if (array_key_exists("o", $options)) {
+            $this->opt['directory'] = $options["o"];
+        }
+
         // Just list books titles 
         if (array_key_exists("t", $options)) {
             $this->opt['titles'] = true;
         }
-        
+
         if (array_key_exists("a", $options)) {
             $this->opt['authors'] = true;
         }
@@ -99,13 +103,35 @@ class Scanner {
     }
 
     private function output() {
-        if ($this->opt['titles'] == true) {
-            foreach ($this->books->getTitles() as $title)
-                echo $title . "\n";
+
+        if (!empty($this->opt['directory'])) {
+            if (!file_exists($this->opt['directory'])) {
+                if (!mkdir($this->opt['directory'])) {
+                    echo "Can't create directory : " . $this->opt['directory'] . "\n";
+                    exit(2);
+                }
+            }
+
+            foreach ($this->books as $book) {
+                $file = fopen($this->opt['directory'] . DIRECTORY_SEPARATOR . $book->getTitle(), "w") 
+                        or die("Could not create file : " . $this->opt['directory'] . DIRECTORY_SEPARATOR . $book->getTitle());
+                fwrite($file, $book->getTitle() . " by " . $book->getAuthor() . "\n\n" );
+                $highlights = $book->getHighlights();
+                foreach( $highlights as $high ) {
+                    fwrite($file, $high . "\n" );
+                }
+                fclose($file);
+            }
         }
-        
-        if ($this->opt['authors'] == true ) {
-            foreach( $this->books->getAuthors() as $author ) {
+
+        if ($this->opt['titles'] == true) {
+            foreach ($this->books as $book) {
+                echo $book->getTitle() . "\n";
+            }
+        }
+
+        if ($this->opt['authors'] == true) {
+            foreach ($this->books->getAuthors() as $author) {
                 echo $author . "\n";
             }
         }
@@ -115,9 +141,10 @@ class Scanner {
         echo "Usage: " . $this->argv[0] . " [OPTION] -f MyClippingFile\n";
         echo "\n";
         echo "options: \n";
-        echo "-f file   The file containing the clippings.\n";
-        echo "-t        list the book titles in the clipping file.\n";
-        echo "-a        list the all the authors. Authors are only listed once.\n";
+        echo "-f file       The file containing the clippings.\n";
+        echo "-t            List the book titles in the clipping file.\n";
+        echo "-a            List the all the authors. Authors are only listed once.\n";
+        echo "-o directory  The directory to output files.\n";
         echo "\n";
     }
 

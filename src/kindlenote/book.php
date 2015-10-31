@@ -18,13 +18,16 @@ class Book {
         return $this->title;
     }
     
-    public function getAuthors() {
+    public function getAuthor() {
         return $this->author;
     }
 
-
     public function addHighlight( $highlight ) {
         $this->highlights[] = $highlight;
+    }
+    
+    public function getHighlights() {
+        return $this->highlights;
     }
 }
 

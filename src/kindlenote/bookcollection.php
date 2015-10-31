@@ -9,7 +9,7 @@ namespace smaegaard\kindlenote;
  */
 include "book.php";
 
-class BookCollection {
+class BookCollection implements \IteratorAggregate {
 
     private $books;
 
@@ -33,30 +33,18 @@ class BookCollection {
     }
 
     /*
-     *  return array of titles
-     */
-
-    public function getTitles() {
-        $titles = array();
-        foreach ($this->books as $book) {
-            $titles[] = $book->getTitle();
-        }
-        return $titles;
-    }
-    
-    /*
      * return array of authors.
      * 
      * returns no duplicats.
      */
+
     public function getAuthors() {
         $authors = array();
         foreach ($this->books as $book) {
-            $authors[] = $book->getAuthors();   
+            $authors[] = $book->getAuthors();
         }
-        return array_unique($authors, SORT_STRING); 
+        return array_unique($authors, SORT_STRING);
     }
-
 
     public function getBook($title) {
         foreach ($this->books as $book)
@@ -76,6 +64,14 @@ class BookCollection {
         }
 
         return false;
+    }
+
+    /*
+     *  Iterator over books
+     */
+
+    public function getIterator() {
+        return new \ArrayIterator($this->books);
     }
 
     private function getTitleFromLine($line) {
