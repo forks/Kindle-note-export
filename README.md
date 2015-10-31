@@ -12,11 +12,11 @@ $ php -f src/kindlenoteexport.php [OPTION] -f MyClippingFile
 
 options: 
 ```
--f <filename>     The file containing the clippings.
+-f <filename>       The file containing the clippings.
 
--t              List the book titles in the clipping file.
+-t                  List the book titles in the clipping file.
 
--a              List the all the authors. Authors are only listed once.
+-a                  List the all the authors. Authors are only listed once.
 
--o <directory>    The directory to output files.
+-o <directory>      The directory to output files.
 ```
