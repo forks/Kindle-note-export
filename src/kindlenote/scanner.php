@@ -1,6 +1,4 @@
-<?php
-
-namespace smaegaard\kindlenote;
+<?php namespace smaegaard\kindlenote;
 
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 
@@ -33,8 +31,8 @@ class Scanner {
 
     public function run() {
         $options = getopt("atho:f:");
-        
-        if (array_key_exists("h", $options) ) {
+
+        if (array_key_exists("h", $options)) {
             $this->usage();
             exit(1);
         }
@@ -92,6 +90,8 @@ class Scanner {
             }
 
             if (strpos($line, "- Your Bookmark") !== false) {
+                $this->books->addBookmark($last_title, $line);
+                $line = fgets($this->clipfile);
                 continue;
             }
 
@@ -118,12 +118,12 @@ class Scanner {
             }
 
             foreach ($this->books as $book) {
-                $file = fopen($this->opt['directory'] . DIRECTORY_SEPARATOR . $book->getTitle(), "w") 
+                $file = fopen($this->opt['directory'] . DIRECTORY_SEPARATOR . $book->getTitle(), "w")
                         or die("Could not create file : " . $this->opt['directory'] . DIRECTORY_SEPARATOR . $book->getTitle());
-                fwrite($file, $book->getTitle() . " by " . $book->getAuthor() . "\n\n" );
+                fwrite($file, $book->getTitle() . " by " . $book->getAuthor() . "\n\n");
                 $highlights = $book->getHighlights();
-                foreach( $highlights as $high ) {
-                    fwrite($file, $high . "\n" );
+                foreach ($highlights as $high) {
+                    fwrite($file, $high . "\n");
                 }
                 fclose($file);
             }

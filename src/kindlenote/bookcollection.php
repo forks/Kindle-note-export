@@ -1,5 +1,4 @@
 <?php
-
 namespace smaegaard\kindlenote;
 
 /*
@@ -30,6 +29,22 @@ class BookCollection implements \IteratorAggregate {
 
     public function addHighlight($title, $highlight) {
         $this->getBook($title)->addHighlight($highlight);
+    }
+
+    public function addBookmark($title, $line) {
+        $location = null;
+        $date = null;
+        $page = null;
+        if(substr_count($line, "|") == 1 ) {
+            $page = null;
+            $text = explode("|", $line);
+            $location = substr($text[0], 28);
+            $date = substr($text[1], 10);
+        }
+      //  echo $location . "\n";
+        echo $date . "\n";
+        
+        $this->getBook($title)->addBookmark($page, $location, $date);
     }
 
     /*
@@ -73,7 +88,7 @@ class BookCollection implements \IteratorAggregate {
     public function getIterator() {
         return new \ArrayIterator($this->books);
     }
-
+    
     private function getTitleFromLine($line) {
         $text = explode("(", $line);
         return $text[0];
