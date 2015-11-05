@@ -1,4 +1,6 @@
-<?php namespace smaegaard\kindlenote;
+<?php
+
+namespace smaegaard\kindlenote;
 
 /*
  *  This is just a quick script to Reformat kindle highlights in a more 
@@ -10,9 +12,10 @@
  *  If the option TITLES is giving after the clipping file, it will just print
  *  a list of the book titles.
  */
-include 'bookcollection.php';
 
-class Scanner {
+use smaegaard\kindlenote;
+
+class scanner {
 
     private $argv;
     private $argc;
@@ -23,14 +26,15 @@ class Scanner {
     public function __construct() {
         $this->argv = $_SERVER['argv'];
         $this->argc = $_SERVER['argc'];
-        $this->books = new BookCollection();
+        $this->books = new bookcollection();
         $this->opt = array();
         $this->opt['titles'] = false;
         $this->opt['authors'] = false;
+        $this->opt['bookmarks'] = false;
     }
 
     public function run() {
-        $options = getopt("atho:f:");
+        $options = getopt("atbho:f:");
 
         if (array_key_exists("h", $options)) {
             $this->usage();
@@ -62,6 +66,10 @@ class Scanner {
 
         if (array_key_exists("a", $options)) {
             $this->opt['authors'] = true;
+        }
+
+        if (array_key_exists("b", $options)) {
+            $this->opt['bookmarks'] = true;
         }
 
         $this->parse();
@@ -125,6 +133,20 @@ class Scanner {
                 foreach ($highlights as $high) {
                     fwrite($file, $high . "\n");
                 }
+                // if bookmarks flag is parsed on the commandline.
+                // is not a array
+                if ($this->opt['bookmarks'] == true) {
+                    $bookmarks = $book->getBookmarks();
+
+                    if (!empty($bookmarks)) {
+                        foreach ($bookmarks as $bookmark) {
+                            if (empty($bookmark->getPage()))
+                                fwrite($file, "bookmark at location " . $bookmark->getLocation() . "\n\n");
+                            else
+                                fwrite($file, "bookmark on page " . $bookmark->getPage() . "\n\n");
+                        }
+                    }
+                }
                 fclose($file);
             }
         }
@@ -150,6 +172,7 @@ class Scanner {
         echo "-f <file>         The clipping file to be parsed\n";
         echo "-t                List all book titles found in the clipping file\n";
         echo "-a                List the all the authors. Authors are only listed once\n";
+        echo "-b                list bookmarks.\n";
         echo "-o <directory>    The directory to output files to\n";
         echo "\n";
     }

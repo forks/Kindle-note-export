@@ -3,14 +3,15 @@
  *  Contains a single bookmark
  * 
  */
+use smaegaard\kindlenote;
 
-class Bookmark {
-    private $mark;
+class bookmark {
+    private $page;
     private $location;
     private $date;
     
     public function __construct( $page, $location, $date ) {
-        $this->mark = $page;
+        $this->page = $page;
         $this->location = $location;
         $this->date = $date;
     }
@@ -19,7 +20,7 @@ class Bookmark {
         return $this->page;
     }
     
-    public function getLocatation() {
+    public function getLocation() {
         return $this->location;
     }
     

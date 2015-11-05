@@ -3,7 +3,9 @@
 /*
  *  Book highlight
  */
-class Highlight {
+use smaegaard\kindlenote;
+
+class highlight {
     private $page;
     private $location;
     private $added;

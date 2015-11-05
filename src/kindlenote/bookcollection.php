@@ -1,14 +1,13 @@
-<?php
-namespace smaegaard\kindlenote;
+<?php namespace smaegaard\kindlenote;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-include "book.php";
+use smaegaard\kindlenote;
 
-class BookCollection implements \IteratorAggregate {
+class bookcollection implements \IteratorAggregate {
 
     private $books;
 
@@ -22,7 +21,7 @@ class BookCollection implements \IteratorAggregate {
         } else {
             $title = $this->getTitleFromLine($line);
             $author = $this->getAuthorFromLine($line);
-            $this->books[] = new Book($title, $author);
+            $this->books[] = new book($title, $author);
             return end($this->books)->getTitle();
         }
     }
@@ -31,19 +30,27 @@ class BookCollection implements \IteratorAggregate {
         $this->getBook($title)->addHighlight($highlight);
     }
 
+    /*
+     *  Parse a bookmark line, and add the bookmark to
+     *  the book name by the title.
+     */
     public function addBookmark($title, $line) {
         $location = null;
         $date = null;
         $page = null;
-        if(substr_count($line, "|") == 1 ) {
-            $page = null;
+        if (substr_count($line, "|") == 1) {
             $text = explode("|", $line);
             $location = substr($text[0], 28);
             $date = substr($text[1], 10);
         }
-      //  echo $location . "\n";
-        echo $date . "\n";
-        
+        if (substr_count($line, "|") == 2) {
+            $text = explode("|", $line);
+            $page = substr($text[0], 24);
+            $location = substr($text[1], 10);
+            $date = substr($text[2], 10);
+        }
+        $date = str_replace("\n", '', $date);
+
         $this->getBook($title)->addBookmark($page, $location, $date);
     }
 
@@ -88,7 +95,7 @@ class BookCollection implements \IteratorAggregate {
     public function getIterator() {
         return new \ArrayIterator($this->books);
     }
-    
+
     private function getTitleFromLine($line) {
         $text = explode("(", $line);
         return $text[0];

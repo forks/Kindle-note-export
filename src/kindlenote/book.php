@@ -2,9 +2,9 @@
 /* 
  *  Book
  */
-include 'bookmark.php';
+use smaegaard\kindlenote;
 
-class Book {
+class book {
     private $title;
     private $highlights;
     private $bookmarks;
@@ -30,7 +30,11 @@ class Book {
     }
     
     public function addBookmark( $page, $location, $date ) {
-        $this->bookmarks[] = new Bookmark( $page, $location, $date );
+        $this->bookmarks[] = new bookmark( $page, $location, $date );
+    }
+    
+    public function getBookmarks() {
+        return $this->bookmarks;
     }
     
     public function getHighlights() {
